@@ -1,3 +1,4 @@
+%%
 model = createpde('structural','static-planestress');
 radius = 20.0;
 width = 50.0;
@@ -17,7 +18,7 @@ title 'Geometry with Edge Labels';
 structuralProperties(model,'YoungsModulus',200E3,'PoissonsRatio',0.25);
 structuralBC(model,'Edge',[3,4],'Constraint','symmetric'); %symmetric하게 y,x에 대하여 고정
 structuralBoundaryLoad(model,'Edge',1,'SurfaceTraction',[100;0]); %surface traction
-
+%%
 generateMesh(model,'Hmax',radius/6); % Max. element edge size. geometry order-quadratic (6개의 node를 가진 triangle)
 figure(2);
 pdemesh(model); % plot
