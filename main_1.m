@@ -8,36 +8,38 @@ E = 7E4; v = 0.25;
 C = E/(1-v^2)*[1 v 0; v 1 0; 0 0 (1-v)/2];
 St_avg = 25;
 i=1;
-%for loop (상이한 반지름에 대한 값 얻음)
-for radius = 1:1:9
-    [node, element] = geoNmesh(radius);
-    % Boundary Condition(Constraint)
-    Con_ux = 2*find(node(1,:) > -1E-9 & node(1,:) < 1E-9)-1;
-    Con_uy = 2*find(node(2,:) > -1E-9 & node(2,:) < 1E-9);
-    Con_u  = [Con_ux Con_uy];
-    ndof = setdiff(1:2*length(node),Con_u);
-    % Loading Condition
-    f = [0; 25];
-    u_L = find(node(2,:) > 28-1E-9 & node(2,:) < 28+1E-9);
-    % Global K Matrix
-    K = Kmat(node, element, C);
-    % Global F Vector
-    F = force(node, element, f, u_L);
-    % Calculate Global U
-    U = zeros(2*length(node),1);
-    U(ndof) = K(ndof,ndof)\F(ndof);
-    % Calculate Stress Vector/Stress Concentration Factor
-    St_G = stress(node, element, U, C);
-    St_max = max(St_G);
-    y(i) = St_max / St_avg;
-    x(i) = radius/(20-2*radius);
-    i=i+1;
+% 모듈 시작
+if ~exist('run_data','var')
+    for radius = 1:1:9
+        [node, element] = geoNmesh(radius);
+        % Boundary Condition(Constraint)
+        Con_ux = 2*find(node(1,:) > -1E-9 & node(1,:) < 1E-9)-1;
+        Con_uy = 2*find(node(2,:) > -1E-9 & node(2,:) < 1E-9);
+        Con_u  = [Con_ux Con_uy];
+        ndof = setdiff(1:2*length(node),Con_u);
+        % Loading Condition
+        f = [0; 25];
+        u_L = find(node(2,:) > 28-1E-9 & node(2,:) < 28+1E-9);
+        % Global K Matrix
+        K = Kmat(node, element, C);
+        % Global F Vector
+        F = force(node, element, f, u_L);
+        % Calculate Global U
+        U = zeros(2*length(node),1);
+        U(ndof) = K(ndof,ndof)\F(ndof);
+        % Calculate Stress Vector/Stress Concentration Factor
+        St_G = stress(node, element, U, C);
+        St_max = max(St_G);
+        y(i) = St_max / St_avg;
+        x(i) = radius/(20-2*radius);
+        i=i+1;
+    end
+    figure(1);
+    plot(x,y,'-o','MarkerIndices',1:1:length(y));
+    title('The stress concentration factor against \rho /d')
+    xlabel('\rho / d')
+    ylabel('Stress Concentration Factor')
 end
-figure(1);
-plot(x,y,'-o','MarkerIndices',1:1:length(y));
-title('The stress concentration factor against \rho /d')
-xlabel('\rho / d')
-ylabel('Stress Concentration Factor')
 
 function [KG] = Kmat(node, element, C)
 IK = []; JK = []; K = [];
@@ -62,6 +64,7 @@ for i = 1 : size(element,2)
 end
 KG = sparse(IK(:), JK(:), K(:));
 end
+
 function [St_G] = stress(node, element, U, C)
 syms x y
 St_G=[];
@@ -80,6 +83,7 @@ for i = 1 : size(element,2)
  
 end
 end
+
 function [node, element] = geoNmesh(radius)
 model = createpde('structural','static-planestress');
 width = 10.0;
@@ -100,6 +104,7 @@ generateMesh(model,'Hmax',radius/6,'GeometricOrder','linear');
 node = model.Mesh.Nodes;
 element = model.Mesh.Elements;
 end
+
 function [FG] = force(node, element, f, u_L)
 syms x y
 F = []; IF = [];
