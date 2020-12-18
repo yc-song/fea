@@ -1,5 +1,5 @@
 %역학과 설계 프로젝트- 기계항공공학부 2017-11416 송종현
-% https://github.com/yc-song/fea_practice
+%https://github.com/yc-song/fea_practice
 %% problem #1
 clc; clear; fclose all;
 % 배열형 데이터 설정/Material Property 설정
@@ -100,7 +100,7 @@ geometryFromEdges(model,g);
 structuralProperties(model,'YoungsModulus',7E4, 'PoissonsRatio',0.25);
 structuralBC(model,'Edge',[3,4],'Constraint','symmetric'); %symmetric하게 y,x에 대하여 고정
 structuralBoundaryLoad(model,'Edge',2,'SurfaceTraction',[0;25]); %surface traction
-generateMesh(model,'Hmax',radius/6,'GeometricOrder','linear');
+generateMesh(model,'Hmax',radius/6,'Hmin',0.1,'GeometricOrder','linear');
 node = model.Mesh.Nodes;
 element = model.Mesh.Elements;
 end
