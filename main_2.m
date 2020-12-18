@@ -1,6 +1,6 @@
 %% Problem 2
 %역학과 설계 프로젝트- 기계항공공학부 2017-11416 송종현
-% https://github.com/yc-song/fea_practice
+%https://github.com/yc-song/fea_practice
 clc; clear; fclose all;
 % 배열형 데이터 설정/Material Property 설정
 
